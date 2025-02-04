@@ -1,10 +1,13 @@
 const express = require("express");
 const http = require("http");
 const socketIo = require("socket.io");
+const cors = require("cors");
 
 const app = express();
 const server = http.createServer(app);
 const port = process.env.PORT || 9001;
+
+app.use(cors());
 
 const io = socketIo(server, {
   cors: {
@@ -45,6 +48,10 @@ io.on("connection", (socket) => {
     console.log("Client disconnected:", socket.peerId);
     socket.to("default-room").emit("user-disconnected", socket.peerId);
   });
+});
+
+app.get("/", (req, res) => {
+  res.send("Signaling server is running");
 });
 
 server.listen(port, () => {
